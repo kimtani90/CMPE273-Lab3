@@ -121,7 +121,7 @@ public class FileController {
         } else {
 
             userFilesService.deleteUserFilesByEmailAndFilepath(file.getFilepath(), email);
-            fileService.updateSharedCount(file.getFilepath(), file.getSharedcount()+1);
+            fileService.updateSharedCount(file.getFilepath(), file.getSharedcount() - 1);
 
         }
 
@@ -134,7 +134,7 @@ public class FileController {
 
         JSONObject jObject = new JSONObject(data);
         Gson gson = new Gson();
-        JSONObject filedata = (JSONObject)jObject.get("filedata");
+        JSONObject filedata = (JSONObject) jObject.get("filedata");
         com.cmpe273.dropbox.backend.entity.Files file = gson.fromJson(filedata.toString(), com.cmpe273.dropbox.backend.entity.Files.class);
         String shareEmail = jObject.getString("shareEmail");
 
@@ -148,13 +148,43 @@ public class FileController {
 
         userFilesService.addUserFile(userfiles);
 
-        fileService.updateSharedCount(file.getFilepath(), file.getSharedcount()+1);
+        fileService.updateSharedCount(file.getFilepath(), file.getSharedcount() + 1);
 
         return new ResponseEntity(null, HttpStatus.OK);
 
     }
 
     @PostMapping(path = "/makefolder", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> shareFile(@RequestBody String data, HttpSession session) throws JSONException {
+    public ResponseEntity<?> makeFolder(@RequestBody String data, HttpSession session) throws JSONException, IOException {
+
+        JSONObject jObject = new JSONObject(data);
+        String folderName = jObject.getString("filename");
+        String folderparent = jObject.getString("fileparent");
+        String email = (String) session.getAttribute("email");
+        String folderpath = "./public/uploads/" + email.split("\\.")[0]+"/"+folderName;
+
+        com.cmpe273.dropbox.backend.entity.Files file= new com.cmpe273.dropbox.backend.entity.Files();
+
+        file.setFilename(folderName);
+        file.setFilepath(folderpath);
+        file.setSharedcount(0);
+        file.setOwner(email);
+        file.setFileparent(folderparent);
+        file.setStarred("F");
+        file.setIsfile("F");
+
+        Path path = Paths.get(folderpath);
+        Files.createDirectories(path);
+
+        fileService.uploadFile(file);
+
+        Userfiles userfiles = new Userfiles();
+
+        userfiles.setEmail(email);
+        userfiles.setFilepath(folderpath);
+
+        userFilesService.addUserFile(userfiles);
+        return new ResponseEntity(null, HttpStatus.OK);
 
     }
+}
