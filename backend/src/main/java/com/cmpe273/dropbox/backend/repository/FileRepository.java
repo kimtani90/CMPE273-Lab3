@@ -18,6 +18,7 @@ public interface FileRepository extends CrudRepository<Files, Long> {
 
     Files getByFilepath(String filepath);
 
+    List<Files> getByFileparent(String filepath);
 
     @Transactional
     @Modifying
@@ -27,6 +28,11 @@ public interface FileRepository extends CrudRepository<Files, Long> {
     @Modifying
     @Query("UPDATE Files f SET f.sharedcount = :sharedcount WHERE f.filepath = :filepath")
     void updateSharedCount(@Param("filepath") String filepath, @Param("sharedcount") Integer sharedcount );
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE Files f SET f.starred = :starred WHERE f.filepath = :filepath")
+    void markStar(@Param("filepath") String filepath, @Param("starred") String starred );
 
 
 }

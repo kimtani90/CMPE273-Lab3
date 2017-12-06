@@ -21,12 +21,20 @@ public class FileService {
         return fileRepository.getByFilepath(filepath);
     }
 
+    public List<Files> getFileByFileparent(String filepath){
+        return fileRepository.getByFileparent(filepath);
+    }
+
     public void deleteFile(String filepath){
          fileRepository.deleteByFilepath(filepath);
     }
 
     public void updateSharedCount(String filepath, Integer sharedcount){
         fileRepository.updateSharedCount(filepath, sharedcount);
+    }
+
+    public void markStar(String filepath, String starred){
+        fileRepository.markStar(filepath, starred);
     }
 
 }

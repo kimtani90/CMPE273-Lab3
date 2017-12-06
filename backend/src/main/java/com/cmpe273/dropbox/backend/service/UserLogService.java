@@ -20,4 +20,9 @@ public class UserLogService {
         userLogRepository.save(userlog);
     }
 
+    public List<Userlog> getUserlogByEmail(String email){
+
+        return userLogRepository.getUserlogByEmail(email);
+    }
+
 }

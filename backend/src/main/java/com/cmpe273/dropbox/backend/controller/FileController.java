@@ -1,9 +1,11 @@
 package com.cmpe273.dropbox.backend.controller;
 
 import com.cmpe273.dropbox.backend.entity.Userfiles;
+import com.cmpe273.dropbox.backend.entity.Userlog;
 import com.cmpe273.dropbox.backend.entity.Users;
 import com.cmpe273.dropbox.backend.service.FileService;
 import com.cmpe273.dropbox.backend.service.UserFilesService;
+import com.cmpe273.dropbox.backend.service.UserLogService;
 import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Controller    // This means that this class is a Controller
@@ -32,6 +35,9 @@ public class FileController {
 
     @Autowired
     private UserFilesService userFilesService;
+
+    @Autowired
+    private UserLogService userLogService;
 
     //Save the uploaded file to this folder
     private static String UPLOADED_FOLDER = System.getProperty("user.dir") + "/public/uploads/";
@@ -71,6 +77,17 @@ public class FileController {
 
             userFilesService.addUserFile(userfiles);
 
+            Userlog userlog = new Userlog();
+
+            userlog.setAction("File Upload");
+            userlog.setEmail(email);
+            userlog.setFilename(multipartFile.getOriginalFilename());
+            userlog.setFilepath(filepath);
+            userlog.setIsfile("F");
+            userlog.setActiontime(new Date().toString());
+
+            userLogService.addUserLog(userlog);
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -80,8 +97,18 @@ public class FileController {
         return new ResponseEntity<com.cmpe273.dropbox.backend.entity.Files>(newFile, HttpStatus.OK);
     }
 
+    @GetMapping(path = "/getfolderfiles", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<com.cmpe273.dropbox.backend.entity.Files>> getFilesInFolder(@RequestParam String filepath) {
+
+      //  JSONObject jObject = new JSONObject(filepath);
+
+        List<com.cmpe273.dropbox.backend.entity.Files> filesList = fileService.getFileByFileparent(filepath);
+
+        return new ResponseEntity(filesList, HttpStatus.OK);
+    }
+
     @GetMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<com.cmpe273.dropbox.backend.entity.Files>> getUserDetails(HttpSession session) {
+    public ResponseEntity<List<com.cmpe273.dropbox.backend.entity.Files>> getUserFiles(HttpSession session) {
 
         String email = (String) session.getAttribute("email");
         List<Userfiles> userFilesList = userFilesService.getUserFilesByEmail(email);
@@ -114,6 +141,23 @@ public class FileController {
 
                 userFilesService.deleteUserFilesByFilepath(file.getFilepath());
                 fileService.deleteFile(file.getFilepath());
+
+
+                Userlog userlog = new Userlog();
+
+
+                userlog.setEmail(email);
+                userlog.setFilename(file.getFilename());
+                userlog.setFilepath(filepath);
+                if(file.getIsfile().equals("T"))
+                    userlog.setAction("File Delete");
+
+                else
+                    userlog.setAction("Folder Delete");
+
+                userlog.setActiontime(new Date().toString());
+                userlog.setIsfile(file.getIsfile());
+                userLogService.addUserLog(userlog);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -150,6 +194,22 @@ public class FileController {
 
         fileService.updateSharedCount(file.getFilepath(), file.getSharedcount() + 1);
 
+
+        Userlog userlog = new Userlog();
+
+        userlog.setEmail(email);
+        userlog.setFilename(file.getFilename());
+        userlog.setFilepath(file.getFilepath());
+        if(file.getIsfile().equals("T"))
+            userlog.setAction("File shared with "+shareEmail);
+
+        else
+            userlog.setAction("Folder shared with "+shareEmail);
+
+        userlog.setActiontime(new Date().toString());
+        userlog.setIsfile(file.getIsfile());
+        userLogService.addUserLog(userlog);
+
         return new ResponseEntity(null, HttpStatus.OK);
 
     }
@@ -184,6 +244,30 @@ public class FileController {
         userfiles.setFilepath(folderpath);
 
         userFilesService.addUserFile(userfiles);
+
+        Userlog userlog = new Userlog();
+
+        userlog.setEmail(email);
+        userlog.setFilename(file.getFilename());
+        userlog.setFilepath(file.getFilepath());
+        userlog.setAction("Make Folder");
+        userlog.setActiontime(new Date().toString());
+        userlog.setIsfile("F");
+        userLogService.addUserLog(userlog);
+
+
+        return new ResponseEntity(null, HttpStatus.OK);
+
+    }
+
+    @PostMapping(path = "/star", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> starFile(@RequestBody String data) throws JSONException {
+
+        JSONObject jObject = new JSONObject(data);
+        String filepath = jObject.getString("filepath");
+        String starred = jObject.getString("starred");
+
+        fileService.markStar(filepath, starred);
         return new ResponseEntity(null, HttpStatus.OK);
 
     }

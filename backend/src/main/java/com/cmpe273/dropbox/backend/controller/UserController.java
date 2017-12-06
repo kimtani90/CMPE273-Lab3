@@ -1,8 +1,11 @@
 package com.cmpe273.dropbox.backend.controller;
 
 import com.cmpe273.dropbox.backend.entity.Files;
+import com.cmpe273.dropbox.backend.entity.Userlog;
 import com.cmpe273.dropbox.backend.entity.Users;
+import com.cmpe273.dropbox.backend.service.UserLogService;
 import com.cmpe273.dropbox.backend.service.UserService;
+import org.apache.catalina.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,9 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserLogService userLogService;
 
     @PostMapping(path="/signup",consumes = MediaType.APPLICATION_JSON_VALUE) // Map ONLY POST Requests
     public  ResponseEntity<?> addNewUser (@RequestBody Users users) {
@@ -84,6 +90,16 @@ public class UserController {
         if(user!=null)
             return new ResponseEntity(user, HttpStatus.OK);
         return new ResponseEntity(null,HttpStatus.UNAUTHORIZED);
+    }
+
+    @GetMapping(path="/userlogs",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Userlog>> getUserLogs(HttpSession session){
+
+        String email = (String)session.getAttribute("email");
+
+        List<Userlog> userlogs = userLogService.getUserlogByEmail(email);
+
+        return new ResponseEntity(userlogs,HttpStatus.OK);
     }
 
     @PostMapping(value = "/logout")
