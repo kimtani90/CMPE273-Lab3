@@ -10,6 +10,8 @@ import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -271,4 +273,29 @@ public class FileController {
         return new ResponseEntity(null, HttpStatus.OK);
 
     }
+
+    @GetMapping(path = "/{filename}"/*, produces = MediaType.APPLICATION_JSON_VALUE*/)
+    public ResponseEntity<InputStreamResource> downloadFile(@RequestParam String filepath, @PathVariable("fileName") String filename) {
+
+        File file2Upload = new File(filepath);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        headers.set(HttpHeaders.CONTENT_DISPOSITION,
+                "attachment; filename=" + filename.replace(" ", "_"));
+        headers.add("Pragma", "no-cache");
+        headers.add("Expires", "0");
+        InputStreamResource resource = null;
+        try {
+            resource = new InputStreamResource(new FileInputStream(file2Upload));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(file2Upload.length())
+                .contentType(MediaType.parseMediaType("application/octet-stream"))
+                .body(resource);
+    }
+
 }
