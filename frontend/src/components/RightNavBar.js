@@ -6,7 +6,7 @@ import { Route, withRouter } from 'react-router-dom';
 
 class RightNavBar extends Component {
 
-    state = { isModalOpen: false, foldername:'', fileparent:'', isfile:'F' , shareEmail:'', clickSharedFolder:false}
+    state = { isModalOpen: false, filename:'', fileparent:'', isfile:'F' , shareEmail:'', clickSharedFolder:false}
 
 
     openModal() {
@@ -18,7 +18,7 @@ class RightNavBar extends Component {
 
         {data!=""?
 
-            ( data.foldername!="" ?(data.shareEmail!=""? this.props.makeSharedFolder(data):this.props.makeFolder(data))
+            ( data.filename!="" ?(data.shareEmail!=""? this.props.makeSharedFolder(data):this.props.makeFolder(data))
             :''):''}
 
         this.setState({ isModalOpen: false, clickSharedFolder: false})
@@ -69,7 +69,7 @@ console.log(this.props.parentFile)
                             <input type="text" className="form-control" required="true" autoFocus
                                    onChange={(event) => {
                                        this.setState({
-                                           foldername: event.target.value
+                                           filename: event.target.value
                                        });
                                    }}/>
                         </Col>

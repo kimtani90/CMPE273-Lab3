@@ -120,10 +120,10 @@ class UserDetails extends Component {
                                         <input type="text" className="form-control" placeholder="First Name" required
                                                autoFocus defaultValue={this.props.userdata.firstName}
                                                onChange={(event) => {
-                                                   this.setState({
+                                                       this.setState({
 
-                                                       firstname: event.target.value==""?this.props.userdata.firstName:event.target.value
-                                                   });
+                                                           firstname: event.target.value==""?this.props.userdata.firstName:event.target.value
+                                                       });
                                                }}/>
                                 } </td>
 

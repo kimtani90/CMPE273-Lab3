@@ -122,19 +122,19 @@ class FileUpload extends Component {
 
         API.makeFolder(folder)
             .then((res) => {
-
+console.log(folder);
                 if (res.status == 200) {
 
                     this.props.addFile(folder);
                     this.setState({
 
-                        message: res.message
+                        message: "Folder created successfully!"
                     });
 
                 }else if (res.status == 401) {
                     this.setState({
 
-                        message: res.message
+                        message: "Error creatinf folder"
                     });
                 }
             });
@@ -246,19 +246,23 @@ class FileUpload extends Component {
 
             API.getFileList(filedata.filepath)
                 .then((res) => {
-                if (res.status == 201) {
 
-                    this.props.getFiles(res.files);
+                    if (res.status == 200) {
 
-                }else if (res.status == 401) {
+                        res.json().then(files => {
+                            this.props.getFiles(files);
+                        });
 
+                        console.log("Success...")
 
-                }
+                    }else if (res.status == 401) {
 
-            });
+                        console.log("Failure...")
+                    }
+
+                });
 
         }
-
 
         else{
 

@@ -43,7 +43,7 @@ export const createUser = (payload) =>
 
 
 export const getFile = (filepath) =>
-    fetch(`${api}/files?filepath=`+filepath,{
+    fetch(`${api}/files/aaa?filepath=`+filepath,{
         method: 'GET',
         credentials:'include'
     }).then(res => res)
@@ -75,12 +75,24 @@ export const getFilesForUser = () =>
             return error;
         });
 
-export const getFileList = (filepath) =>
-    fetch(`${api}/files/getfiles?filepath=`+filepath,{
+
+export const getUserLogs = () =>
+    fetch(`${api}/users/userlogs`,{
         method: 'GET',
         credentials:'include'
     })
-        .then(res => res.json())
+        .then(res => res)
+        .catch(error => {
+            console.log("This is error.");
+            return error;
+        });
+
+export const getFileList = (filepath) =>
+    fetch(`${api}/files/getfolderfiles?filepath=`+filepath,{
+        method: 'GET',
+        credentials:'include'
+    })
+        .then(res => res)
         .catch(error => {
             console.log("This is error.");
             return error;
@@ -100,12 +112,12 @@ export const uploadFile = (payload) =>
     });
 
 
-export const getGroups = (filepath) =>
+export const getGroups = () =>
     fetch(`${api}/groups/getgroups`,{
         method: 'GET',
         credentials:'include'
     })
-        .then(res => res.json())
+        .then(res => res)
         .catch(error => {
             console.log("This is error.");
             return error;
@@ -122,7 +134,7 @@ export const addGroup = (data) =>
         body: JSON.stringify(data),
         credentials:'include'
     }).then(res => {
-        return res.json();
+        return res;
     }).catch(error => {
         console.log("This is error");
         return error;
@@ -138,28 +150,23 @@ export const deleteGroup = (data) =>
         body: JSON.stringify(data),
         credentials:'include'
     }).then(res => {
-        return res.json();
+        return res;
     }).catch(error => {
         console.log("This is error");
         return error;
     });
 
 
-export const getMembers = (data) =>
-    fetch(`${api}/groups/getmembers`, {
-        method: 'POST',
-        headers: {
-            ...headers,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data),
+export const getMembers = (id) =>
+    fetch(`${api}/groups/getmembers?groupid=`+id, {
+        method: 'GET',
         credentials:'include'
-    }).then(res => {
-        return res.json();
-    }).catch(error => {
-        console.log("This is error");
-        return error;
-    });
+    })
+        .then(res => res)
+        .catch(error => {
+            console.log("This is error.");
+            return error;
+        });
 
 export const addMember = (data) =>
 
@@ -172,7 +179,7 @@ export const addMember = (data) =>
         body: JSON.stringify(data),
         credentials:'include'
     }).then(res => {
-        return res.json();
+        return res;
     }).catch(error => {
         console.log("This is error");
         return error;
@@ -188,7 +195,7 @@ export const deleteMember = (data) =>
         body: JSON.stringify(data),
         credentials:'include'
     }).then(res => {
-        return res.json();
+        return res;
     }).catch(error => {
         console.log("This is error");
         return error;
@@ -289,7 +296,7 @@ export const markStar = (data) =>
         body: JSON.stringify(data),
         credentials:'include'
     }).then(res => {
-        return res.json();
+        return res;
     }).catch(error => {
         console.log("This is error");
         return error;

@@ -16,14 +16,18 @@ class ListMembers extends Component {
     state = {message:''}
 
     componentWillMount(){
-console.log(this.props.group)
-        API.getMembers(this.props.group)
+
+        API.getMembers(this.props.group.groupid)
             .then((res) => {
 
                 console.log(res)
-                if (res.status == 201) {
-                    this.props.getMembers(res.members);
-                    console.log(res.members)
+                if (res.status == 200) {
+                    res.json().then(data => {
+                        console.log(data)
+                        this.props.getMembers(data);
+
+                    });
+
                     this.setState({ message: res.message })
                     console.log("Success...")
 
@@ -35,13 +39,13 @@ console.log(this.props.group)
     }
 
     deleteMember(index, member){
-        member.owner=this.props.group.owner;
-console.log(member);
-        API.deleteMember(member)
+        const data = {'groupId': this.props.group.groupid, 'memberemail':member.email}
+console.log(data);
+        API.deleteMember(data)
             .then((res) => {
 
                 console.log(res)
-                if (res.status == 201) {
+                if (res.status == 200) {
                     this.props.deleteMember(index);
                     this.setState({ message: res.message })
                     console.log("Success...")
@@ -66,7 +70,7 @@ console.log(member);
                         <th></th>
                         <th>First Name</th>
                         <th>Last Name</th>
-                        <th>Group</th>
+                        <th>Email</th>
 
                     </tr>
                     </thead>
@@ -92,15 +96,17 @@ console.log(member);
                                     {member.lastname}
                                 </td>
                                 <td>
-                                    {member.group}
+                                    {member.email}
                                 </td>
-
+                                {this.props.group.owner==localStorage.getItem("email")?
                                 <td>
                                     <button className="btn btn-primary" type="submit"
                                             onClick={() => this.deleteMember(index, member)}>
                                         Delete
                                     </button>
                                 </td>
+                                    :
+                                    ""}
                             </tr>
                         );
                     })}

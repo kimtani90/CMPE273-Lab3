@@ -24,8 +24,13 @@ class ListGroup extends Component {
             .then((res) => {
 
             console.log(res)
-                if (res.status == 201) {
-                    this.props.getGroups(res.groups);
+                if (res.status == 200) {
+                    res.json().then(data => {
+
+                        this.props.getGroups(data);
+
+                    });
+
 
                     this.setState({ message: res.message })
 
@@ -43,7 +48,7 @@ class ListGroup extends Component {
             .then((res) => {
 
                 console.log(res)
-                if (res.status == 201) {
+                if (res.status == 200) {
                     this.props.deleteGroup(index);
                     this.setState({ message: res.message })
                     console.log("Success...")

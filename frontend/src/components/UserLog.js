@@ -20,18 +20,18 @@ class UserLog extends Component {
 
     componentWillMount(){
 
-        API.getUserDetails()
-            .then((userres) => {
+        API.getUserLogs()
+            .then((res) => {
 
-                if (userres.status == 200) {
+                if (res.status == 200) {
 
-                    userres.json().then(userdata => {
-                        this.props.afterlogin(userdata);
+                    res.json().then(logs => {
+                        this.props.getFileLog(logs);
 
                     });
 
 
-                }else if (userres.status == 401) {
+                }else if (res.status == 401) {
 
                     this.props.history.push('/');
                 }

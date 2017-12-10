@@ -17,10 +17,13 @@ console.log(data)
             .then((res) => {
 
                 console.log(res)
-                if (res.status == 201) {
-                    console.log(res);
+                if (res.status == 200) {
+                    res.json().then(grp => {
 
-                    this.props.addGroup(res.group);
+                        console.log(grp);
+
+                        this.props.addGroup(grp);
+                    });
                     this.setState({ message: res.message })
 
                 }else if (res.status == 401) {

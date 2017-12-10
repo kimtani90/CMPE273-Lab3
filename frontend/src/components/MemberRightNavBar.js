@@ -12,17 +12,22 @@ class MemberRightNavBar extends Component {
     state = { isModalOpen: false, member:'', message:''}
 
     addMember(data){
-        data.group=this.props.group;
+        data.groupId=this.props.group.groupid;
 
         console.log(data)
         API.addMember(data)
             .then((res) => {
 
                 console.log(res)
-                if (res.status == 201) {
+                if (res.status == 200) {
                     console.log(res);
+                    res.json().then(data => {
+                        console.log(data)
+                        this.props.addMember(data);
 
-                    this.props.addMember(res.member);
+                    });
+
+
                     this.setState({ message: res.message })
 
                 }else if (res.status == 401) {

@@ -47,15 +47,15 @@ class FileGridList extends Component {
 
     markStar(index, filepath, starred){
 
-        const data={filepath:filepath, starred:starred}
+        const data={"filepath":filepath, "starred":starred}
 
         API.markStar(data)
             .then((res) => {
 
-                if (res.status == 201) {
+                if (res.status == 200) {
                     console.log(res);
 
-                    this.props.markStar(index, res.starred);
+                    this.props.markStar(index, starred);
 
                 }else if (res.status == 401) {
 
@@ -102,24 +102,25 @@ class FileGridList extends Component {
 
 
                       //  if(file.fileparent==this.props.parentFile || (file.isfile=='T' && file.owner!= this.props.userEmail )) {
-                            var downloadlink= 'http://localhost:3001/files?filepath='+file.filepath
-                            return (
+                        var downloadlink= 'http://localhost:8080/files/'+file.filename+'?filepath='+file.filepath
+
+                        return (
                                 <tr className="justify-content-md-center">
 
                                     <td>
                                         <div className="row justify-content-md-left">
 
                                             <div className="col-md-1">
-                                                {file.starred==true?
+                                                {file.starred=="T"?
                                                     <a href="#" className="link-title "
-                                                       onClick={() => this.markStar(index, file.filepath, false)}>
+                                                       onClick={() => this.markStar(index, file.filepath, "F")}>
 
                                                     <span className="fa fa-star" ></span>
 
                                                     </a>
                                                 :
                                                     <a href="#" className="link-title "
-                                                       onClick={() => this.markStar(index, file.filepath, true)}>
+                                                       onClick={() => this.markStar(index, file.filepath, "T")}>
 
                                                     <span className="fa fa-star-o" onClick={() => this.markStar(index, file)}></span>
                                                     </a>}
