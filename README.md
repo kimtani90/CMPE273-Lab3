@@ -7,7 +7,7 @@ Clone the repository using git clone command.
 <h2>To run Dropbox application:<br/></h2>
 
 
-<h2>Database settings:<br/></h2>
+##Database settings:<br/>
 Change db username and password as per your mysql DB credentialsin src/main/resources/application.properties file.<br/>
 Run table_script.sql in MySQL<br/><br/>
 
