@@ -87,7 +87,7 @@ class MemberRightNavBar extends Component {
                             <Col md={4}>Member Email:</Col>
                             <Col md={8}>
                                 <input type="text" className="form-control" required="true" autoFocus
-                                       onChange={(event) => {
+                                       placeholder="Enter email" onChange={(event) => {
                                            this.setState({
                                                member: event.target.value
                                            });

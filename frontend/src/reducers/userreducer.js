@@ -7,7 +7,7 @@ const initialState = {
     lastName: '',
     password: '',
     email: '',
-    contactno: '',
+    contact: '',
     interests:'',
     lastLoginTime:''
 };
@@ -22,7 +22,7 @@ const userdata = (state = initialState, action) => {
                 lastName: action.payload.lastname,
                 email: action.payload.email,
                 password: action.payload.password,
-                contactno: action.payload.contactno,
+                contact: action.payload.contact,
                 interests:action.payload.interests,
                 lastLoginTime:action.payload.lastlogin,
 
@@ -33,7 +33,7 @@ const userdata = (state = initialState, action) => {
                 ...state,
                 firstName: action.payload.firstname,
                 lastName: action.payload.lastname,
-                contactno: action.payload.contactno,
+                contact: action.payload.contact,
                 interests:action.payload.interests
             }
         default :

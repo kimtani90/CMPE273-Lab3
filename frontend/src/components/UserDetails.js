@@ -26,7 +26,7 @@ class UserDetails extends Component {
                             firstname:userdata.firstname,
                             lastname:userdata.lastname,
                             email:userdata.email,
-                            contactno:userdata.contact,
+                            contact:userdata.contact,
                             interests:userdata.interests,
                             editClicked:false
                         })
@@ -94,7 +94,7 @@ class UserDetails extends Component {
 
     }
 
-    state={firstname:this.props.userdata.firstname, lastname:this.props.userdata.lastname, email:this.props.userdata.email, contactno:this.props.userdata.contact, interests:this.props.userdata.interests, editClicked:false}
+    state={firstname:this.props.userdata.firstname, lastname:this.props.userdata.lastname, email:this.props.userdata.email, contact:this.props.userdata.contact, interests:this.props.userdata.interests, editClicked:false}
 
     render() {
         return (
@@ -153,12 +153,12 @@ class UserDetails extends Component {
                                     <td>Contact Number:</td>
                                     <td>
                                         {
-                                            this.state.editClicked == false ? this.props.userdata.contactno :
+                                            this.state.editClicked == false ? this.props.userdata.contact :
                                                 <input type="tel" className="form-control" placeholder="Contact Number" required
-                                                       autoFocus defaultValue={this.props.userdata.contactno}
+                                                       autoFocus defaultValue={this.props.userdata.contact}
                                                        onChange={(event) => {
                                                            this.setState({
-                                                               contactno: event.target.value==""?this.props.userdata.contactno:event.target.value
+                                                               contact: event.target.value==""?this.props.userdata.contact:event.target.value
                                                            });
                                                        }}/>
                                         } </td>
