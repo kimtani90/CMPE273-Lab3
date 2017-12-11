@@ -16,7 +16,7 @@ import java.util.List;
 
 public interface FileRepository extends CrudRepository<Files, Long> {
 
-    Files getByFilepath(String filepath);
+    Files getByFilepathAndFileparent(String filepath, String fileparent);
 
     List<Files> getByFileparent(String filepath);
 

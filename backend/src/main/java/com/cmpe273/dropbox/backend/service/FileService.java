@@ -17,8 +17,8 @@ public class FileService {
         fileRepository.save(file);
     }
 
-    public Files getFileByFilepath(String filepath){
-        return fileRepository.getByFilepath(filepath);
+    public Files getFileByFilepath(String filepath, String fileparent){
+        return fileRepository.getByFilepathAndFileparent(filepath, fileparent);
     }
 
     public List<Files> getFileByFileparent(String filepath){

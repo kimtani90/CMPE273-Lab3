@@ -69,6 +69,7 @@ class FileUpload extends Component {
 
         payload.append('fileparent', this.state.fileparent);
 
+        console.log(this.state.fileparent)
 
         API.uploadFile(payload)
         .then((res) => {
@@ -237,12 +238,13 @@ console.log(folder);
 
 
     openFileFolder=(filedata) =>{
-
+console.log(filedata)
         if(filedata.isfile=='F'){
 
             this.setState({
                  fileparent:filedata.filepath
              });
+            console.log(this.state.fileparent)
 
             API.getFileList(filedata.filepath)
                 .then((res) => {

@@ -122,7 +122,7 @@ class FileGridList extends Component {
                                                     <a href="#" className="link-title "
                                                        onClick={() => this.markStar(index, file.filepath, "T")}>
 
-                                                    <span className="fa fa-star-o" onClick={() => this.markStar(index, file)}></span>
+                                                    <span className="fa fa-star-o"></span>
                                                     </a>}
                                             </div>
                                             <div className="col-md-1">

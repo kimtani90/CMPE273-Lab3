@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,7 +43,7 @@ public class FileController {
     private UserLogService userLogService;
 
     //Save the uploaded file to this folder
-    private static String UPLOADED_FOLDER = System.getProperty("user.dir") + "/public/uploads/";
+    private static String UPLOADED_FOLDER = /*System.getProperty("user.dir") + */"./public/uploads/";
 
 
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = "application/json")
@@ -55,7 +56,17 @@ public class FileController {
 
         try {
 
-            String filepath = UPLOADED_FOLDER + email.split("\\.")[0] + "/" + multipartFile.getOriginalFilename();
+            String filepath = "";
+            if(!StringUtils.isEmpty(fileparent)){
+
+                filepath = fileparent+"/" + multipartFile.getOriginalFilename();
+
+            }
+            else{
+
+                filepath = UPLOADED_FOLDER + email.split("\\.")[0] + "/" + multipartFile.getOriginalFilename();
+
+            }
 
             byte[] bytes = multipartFile.getBytes();
             Path path = Paths.get(filepath);
@@ -118,8 +129,9 @@ public class FileController {
         List<com.cmpe273.dropbox.backend.entity.Files> filesList = new ArrayList<>();
         for (Userfiles userfiles : userFilesList) {
 
-            com.cmpe273.dropbox.backend.entity.Files file = fileService.getFileByFilepath(userfiles.getFilepath());
-            filesList.add(file);
+            com.cmpe273.dropbox.backend.entity.Files file = fileService.getFileByFilepath(userfiles.getFilepath(), "");
+            if(file!=null)
+                filesList.add(file);
         }
 
         return new ResponseEntity(filesList, HttpStatus.OK);
@@ -275,7 +287,7 @@ public class FileController {
     }
 
     @GetMapping(path = "/{filename}"/*, produces = MediaType.APPLICATION_JSON_VALUE*/)
-    public ResponseEntity<InputStreamResource> downloadFile(@RequestParam String filepath, @PathVariable("fileName") String filename) {
+    public ResponseEntity<InputStreamResource> downloadFile(@RequestParam String filepath, @PathVariable("filename") String filename) {
 
         File file2Upload = new File(filepath);
         HttpHeaders headers = new HttpHeaders();
