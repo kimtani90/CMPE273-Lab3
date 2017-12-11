@@ -32,8 +32,8 @@ export const createUser = (payload) =>
         body: JSON.stringify(payload),
         credentials:'include'
     }).then(res => {
-        console.log(res);
-        return res.status;
+
+        return res;
     })
         .catch(error => {
             console.log("This is error");

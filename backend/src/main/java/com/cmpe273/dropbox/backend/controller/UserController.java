@@ -36,7 +36,14 @@ public class UserController {
         // @RequestParam means it is a parameter from the GET or POST request
         System.out.println(users.getEmail());
         System.out.println(users.getFirstname());
-        userService.addUser(users);
+        Users existingUser = userService.getUserDetails(users.getEmail());
+        if(existingUser!=null){
+            return new ResponseEntity(null,HttpStatus.UNAUTHORIZED);
+        }
+        Users user = userService.addUser(users);
+        if(user==null){
+            return new ResponseEntity(null,HttpStatus.UNAUTHORIZED);
+        }
         File file = new File(System.getProperty("user.dir")+"/public/uploads/"+users.getEmail().split("\\.")[0]);
         System.out.println(file);
         if (!file.exists()) {

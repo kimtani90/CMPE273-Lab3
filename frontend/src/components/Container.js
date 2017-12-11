@@ -45,13 +45,13 @@ class Container extends Component {
 console.log(userdata)
         API.createUser(userdata)
             .then((res)  => {
-                if (res.status === 201) {
+                if (res.status == 201) {
 
                     this.setState({
                         login: "SI",
                         message: "User details saved successfully!"
                     });
-                } else if (res.status === 401) {
+                } else if (res.status == 401) {
                     this.setState({
 
                         message: "Email already exists!"

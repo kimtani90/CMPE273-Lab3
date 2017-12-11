@@ -106,12 +106,12 @@ class FileUpload extends Component {
                     this.props.deleteFile(index);
                     this.setState({
 
-                        message: res.message
+                        message: "File deleted successfully!"
                     });
                 }else if (res.status == 401) {
                     this.setState({
 
-                        message: res.message
+                        message: "Error deleting file!"
                     });
                 }
 
@@ -126,16 +126,20 @@ class FileUpload extends Component {
 console.log(folder);
                 if (res.status == 200) {
 
-                    this.props.addFile(folder);
-                    this.setState({
+                    res.json().then(folder => {
 
-                        message: "Folder created successfully!"
+                        this.props.addFile(folder);
+                        this.setState({
+
+                            message: "folder created successfully"
+                        });
                     });
+
 
                 }else if (res.status == 401) {
                     this.setState({
 
-                        message: "Error creatinf folder"
+                        message: "Error creating folder!"
                     });
                 }
             });
@@ -160,7 +164,9 @@ console.log(folder);
                 .then((res) => {
 
                     if (res.status == 200) {
-
+console.log('dataaa..',data);
+                        if(!filedata.index)
+                            filedata.index = this.props.filesdata.files.length-1;
                         this.props.sharedCount(filedata.index, data.filedata.sharedcount+1);
                         this.setState({
 
@@ -211,20 +217,24 @@ console.log(folder);
     }
 
     makeSharedFolder=(data) => {
-
+        console.log(data);
         API.makeFolder(data)
             .then((res) => {
 
-                console.log(res.folderdata)
-                if (res.status == 204) {
+                if (res.status == 200) {
 
-                    this.props.addFile(res.folderdata);
-                    const shareddata={file:res.folderdata, shareEmail:data.shareEmail}
-                    this.sharefile(shareddata)
-                    this.setState({
+                    res.json().then(folder => {
+                        console.log(folder);
+                       // data.filepath=folder;
+                        this.props.addFile(folder);
+                        const shareddata={file:folder, shareEmail:data.shareEmail}
+                        this.sharefile(shareddata)
+                        this.setState({
 
-                        message: "folder created successfully"
+                            message: "folder created successfully"
+                        });
                     });
+
 
                 }else if (res.status == 401) {
                     this.setState({
@@ -291,6 +301,10 @@ console.log(filedata)
 
                     fileres.json().then(files => {
                         this.props.getFiles(files);
+                        this.setState({
+
+                            fileparent:""
+                        });
                     });
 
                     console.log("Success...")

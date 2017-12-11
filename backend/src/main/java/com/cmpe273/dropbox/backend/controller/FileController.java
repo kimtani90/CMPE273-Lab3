@@ -6,6 +6,7 @@ import com.cmpe273.dropbox.backend.entity.Users;
 import com.cmpe273.dropbox.backend.service.FileService;
 import com.cmpe273.dropbox.backend.service.UserFilesService;
 import com.cmpe273.dropbox.backend.service.UserLogService;
+import com.cmpe273.dropbox.backend.service.UserService;
 import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,6 +42,9 @@ public class FileController {
 
     @Autowired
     private UserLogService userLogService;
+
+    @Autowired
+    private UserService userService;
 
     //Save the uploaded file to this folder
     private static String UPLOADED_FOLDER = /*System.getProperty("user.dir") + */"./public/uploads/";
@@ -104,6 +108,9 @@ public class FileController {
 
         } catch (IOException e) {
             e.printStackTrace();
+
+                return new ResponseEntity(null, HttpStatus.UNAUTHORIZED);
+
         }
 
 
@@ -124,6 +131,9 @@ public class FileController {
     public ResponseEntity<List<com.cmpe273.dropbox.backend.entity.Files>> getUserFiles(HttpSession session) {
 
         String email = (String) session.getAttribute("email");
+        if(email==null){
+            return new ResponseEntity(null, HttpStatus.UNAUTHORIZED);
+        }
         List<Userfiles> userFilesList = userFilesService.getUserFilesByEmail(email);
 
         List<com.cmpe273.dropbox.backend.entity.Files> filesList = new ArrayList<>();
@@ -142,6 +152,10 @@ public class FileController {
         System.out.println(file.getFilepath());
 
         String email = (String) session.getAttribute("email");
+
+        if(email==null){
+            return new ResponseEntity(null, HttpStatus.UNAUTHORIZED);
+        }
 
         String filepath = UPLOADED_FOLDER + file.getOwner().split("\\.")[0] + "/" + file.getFilename();
 
@@ -175,6 +189,9 @@ public class FileController {
 
             } catch (IOException e) {
                 e.printStackTrace();
+
+                    return new ResponseEntity(null, HttpStatus.UNAUTHORIZED);
+
             }
         } else {
 
@@ -196,8 +213,19 @@ public class FileController {
         com.cmpe273.dropbox.backend.entity.Files file = gson.fromJson(filedata.toString(), com.cmpe273.dropbox.backend.entity.Files.class);
         String shareEmail = jObject.getString("shareEmail");
 
+        Users user = userService.getUserDetails(shareEmail);
+
+        if(user==null){
+
+                return new ResponseEntity(null, HttpStatus.UNAUTHORIZED);
+
+        }
+
         String email = (String) session.getAttribute("email");
 
+        if(email==null){
+            return new ResponseEntity(null, HttpStatus.UNAUTHORIZED);
+        }
 
         Userfiles userfiles = new Userfiles();
 
@@ -229,12 +257,17 @@ public class FileController {
     }
 
     @PostMapping(path = "/makefolder", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> makeFolder(@RequestBody String data, HttpSession session) throws JSONException, IOException {
+    public ResponseEntity<com.cmpe273.dropbox.backend.entity.Files> makeFolder(@RequestBody String data, HttpSession session) throws JSONException, IOException {
 
         JSONObject jObject = new JSONObject(data);
         String folderName = jObject.getString("filename");
         String folderparent = jObject.getString("fileparent");
         String email = (String) session.getAttribute("email");
+
+        if(email==null){
+            return new ResponseEntity(null, HttpStatus.UNAUTHORIZED);
+        }
+
         String folderpath = "./public/uploads/" + email.split("\\.")[0]+"/"+folderName;
 
         com.cmpe273.dropbox.backend.entity.Files file= new com.cmpe273.dropbox.backend.entity.Files();
@@ -270,7 +303,7 @@ public class FileController {
         userLogService.addUserLog(userlog);
 
 
-        return new ResponseEntity(null, HttpStatus.OK);
+        return new ResponseEntity(file, HttpStatus.OK);
 
     }
 
@@ -301,6 +334,9 @@ public class FileController {
             resource = new InputStreamResource(new FileInputStream(file2Upload));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+
+                return new ResponseEntity(null, HttpStatus.UNAUTHORIZED);
+
         }
 
         return ResponseEntity.ok()
